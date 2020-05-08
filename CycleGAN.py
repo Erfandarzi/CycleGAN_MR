@@ -30,10 +30,12 @@ np.random.seed(seed=12345)
 
 
 class CycleGAN():
-    def __init__(self, lr_D=2e-4, lr_G=2e-4, image_shape=(304, 256, 1),
+    def __init__(self, lr_D=2e-4, lr_G=2e-4, image_shape=(256, 256, 1),
                  date_time_string_addition='', image_folder='MR'):
         self.img_shape = image_shape
-        self.channels = self.img_shape[-1]
+        print('XXXXXXXXXXXXXXXXXXXXXXx',self.img_shape,'XXXXXXXXXXXXXXXXX')
+        # self.channels = self.img_shape[-1]
+        self.channels=1
         self.normalization = InstanceNormalization
         # Hyper parameters
         self.lambda_1 = 10.0  # Cyclic loss weight A_2_B
@@ -195,7 +197,7 @@ class CycleGAN():
             nr_A_train_imgs = 0
             nr_B_train_imgs = 0
 
-        data = load_data.load_data(nr_of_channels=self.channels,
+        data = load_data.load_data(nr_of_channels=1,
                                    batch_size=self.batch_size,
                                    nr_A_train_imgs=nr_A_train_imgs,
                                    nr_B_train_imgs=nr_B_train_imgs,
@@ -203,12 +205,20 @@ class CycleGAN():
                                    nr_B_test_imgs=nr_B_test_imgs,
                                    subfolder=image_folder)
 
-        self.A_train = data["trainA_images"]
-        self.B_train = data["trainB_images"]
-        self.A_test = data["testA_images"]
-        self.B_test = data["testB_images"]
+        self.A_train = data["trainA_images"][:,:,:,:,0]
+        self.B_train = data["trainB_images"][:,:,:,:,0]
+        self.A_test = data["testA_images"][:,:,:,:,0]
+        self.B_test = data["testB_images"][:,:,:,:,0]
+
         self.testA_image_names = data["testA_image_names"]
         self.testB_image_names = data["testB_image_names"]
+
+        print('xxxx',   self.A_train.shape,'XXX')
+        print('xxxx',   self.B_train.shape,'XXX')
+        print('xxxx',   self.A_test.shape,'XXX')
+        print('xxxx',   self.B_test.shape,'XXX')
+        # print('xxxx',   self.A_train,'XXX')
+
         if not self.use_data_generator:
             print('Data has been loaded')
 
